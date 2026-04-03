@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-# identity reducer
 for line in sys.stdin:
     line = line.strip()
-    if line:
-        print(line)
+    if line and line.startswith("!DOCLEN!"):
+        print("1")
