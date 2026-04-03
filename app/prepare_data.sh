@@ -1,4 +1,6 @@
 #!/bin/bash
+# export LANG=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 
 source .venv/bin/activate
 
@@ -9,12 +11,22 @@ export PYSPARK_DRIVER_PYTHON=$(which python)
 
 unset PYSPARK_PYTHON
 
-# DOWNLOAD a.parquet or any parquet file before you run this
+sleep 5
 
-hdfs dfs -put -f a.parquet / && \
-    spark-submit prepare_data.py && \
-    echo "Putting data to hdfs" && \
-    hdfs dfs -put data / && \
-    hdfs dfs -ls /data && \
-    hdfs dfs -ls /indexer/data && \
-    echo "done data preparation!"
+hdfs dfs -mkdir -p /data
+hdfs dfs -mkdir -p /input
+
+hdfs dfs -put -f data/d.parquet /data/
+
+spark-submit --master local --driver-memory 2g prepare_data.py
+
+echo "Copying text documents to HDFS..."
+hdfs dfs -put -f data /data/documents
+
+echo "HDFS /data"
+hdfs dfs -ls /data/
+
+echo "HDFS /input/data"
+hdfs dfs -ls /input/data/
+
+rm -f data/*.txt
