@@ -1,6 +1,11 @@
 #!/bin/bash
 
-INPUT_PATH="/input/data/part-*.csv"
+if [ -z "$1" ]; then
+    INPUT_PATH="/input/data/part-*.csv"
+else
+    INPUT_PATH="$1"
+fi
+
 TEMP_PATH="/tmp/term_doc_tf"
 OUTPUT_PATH="/indexer"
 

@@ -10,6 +10,7 @@ services:
       - "9870:9870"
     volumes:
       - "./app:/app"
+      - "hdfs_data:/usr/local/hadoop/data"
     networks:
       - spark-cluster
     depends_on:
@@ -26,6 +27,8 @@ services:
   cluster-slave-1:
     image: firasj/spark-docker-cluster
     container_name: cluster-slave-1
+    volumes:
+      - "hdfs_data:/usr/local/hadoop/data"
     networks:
       - spark-cluster
     hostname: cluster-slave-1
@@ -44,6 +47,9 @@ services:
     container_name: cassandra-server
     ports:
       - "7000:7000"
+      - "9042:9042"
+    volumes:
+      - "cassandra_data:/var/lib/cassandra"
     networks:
       - spark-cluster
     
@@ -51,3 +57,7 @@ services:
 networks:
   spark-cluster:
     driver: bridge
+
+volumes:
+  hdfs_data:
+  cassandra_data:
