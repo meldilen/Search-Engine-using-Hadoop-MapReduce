@@ -58,8 +58,11 @@ def main():
     # extract document ID
     filename = os.path.basename(hdfs_path)
     doc_id = filename.split('_')[0]
+
+    # Extract title from filename (remove id and .txt)
+    title_part = filename.split('_', 1)[1].replace('.txt', '').replace('_', ' ')
     
-    print(f"Processing document ID: {doc_id}")
+    print(f"Processing document ID: {doc_id}, Title: {title_part}")
     
     spark = SparkSession.builder.appName("Add document to index").master("local").getOrCreate()
     
@@ -93,7 +96,7 @@ def main():
         else:
             session.execute(f"INSERT INTO term_index (term, postings) VALUES ('{term}', '{doc_id}:{tf}')")
     
-    session.execute(f"INSERT INTO doc_stats (doc_id, doc_len) VALUES ('{doc_id}', {doc_len})")
+    session.execute(f"INSERT INTO doc_stats (doc_id, title, doc_len) VALUES ('{doc_id}', '{title_part}', {doc_len})")
     
     print(f"Document {doc_id} added successfully")
     print(f"New N: {new_N}, New avg_doc_len: {new_avg:.2f}")

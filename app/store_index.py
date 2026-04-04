@@ -29,6 +29,7 @@ session.execute("""
 session.execute("""
     CREATE TABLE IF NOT EXISTS doc_stats (
         doc_id TEXT PRIMARY KEY,
+        title TEXT,
         doc_len INT
     )
 """)
@@ -75,10 +76,16 @@ df_stats = df_stats.toDF("doc_id", "doc_len")
 
 df_stats = df_stats.withColumn("doc_len", col("doc_len").cast("int"))
 
-count_stats = df_stats.count()
+df_titles = spark.read.option("delimiter", "\t").csv("/input/data/part-*.csv")
+df_titles = df_titles.toDF("doc_id", "title", "clean_text")
+df_titles = df_titles.select("doc_id", "title")
+
+df_stats_with_titles = df_stats.join(df_titles, on="doc_id", how="left")
+
+count_stats = df_stats_with_titles.count()
 print(f"Document stats: {count_stats} rows")
 
-df_stats.write \
+df_stats_with_titles.write \
     .format("org.apache.spark.sql.cassandra") \
     .mode("append") \
     .options(table="doc_stats", keyspace=CASSANDRA_KEYSPACE) \
@@ -118,7 +125,7 @@ for row in rows:
 
 rows = session.execute("SELECT * FROM doc_stats LIMIT 5")
 for row in rows:
-    print(f"doc_id: {row.doc_id}, doc_len: {row.doc_len}")
+    print(f"doc_id: {row.doc_id}, title: {row.title}, doc_len: {row.doc_len}")
 
 rows = session.execute("SELECT * FROM global_stats")
 for row in rows:
