@@ -1,6 +1,4 @@
 #!/bin/bash
-echo "This script will include commands to search for documents given the query using Spark RDD"
-
 
 source .venv/bin/activate
 
@@ -21,6 +19,12 @@ QUERY="$1"
 echo "Running BM25 search"
 echo "Query: $QUERY"
 
-echo "$QUERY" | spark-submit --master yarn --archives /app/.venv.tar.gz#.venv query.py
+spark-submit \
+    --master yarn \
+    --deploy-mode client \
+    --archives /app/.venv.tar.gz#.venv \
+    --conf spark.cassandra.connection.host=cassandra-server \
+    --conf spark.cassandra.connection.port=9042 \
+    query.py "$QUERY"
 
 echo "Search completed"

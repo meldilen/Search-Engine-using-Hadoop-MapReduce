@@ -26,17 +26,15 @@ bash prepare_data.sh
 # Run the indexer
 bash index.sh
 
-# Run the ranker
-# bash search.sh "this is a query!"
-
+# Run the ranker with queries
 echo "Query 1: 'football player'"
-echo "football player" | spark-submit --master local query.py
+./search.sh "football player"
 
 echo "Query 2: 'Russian music artist'"
-echo "Russian music artist" | spark-submit --master local query.py
+./search.sh "Russian music artist"
 
 echo "Query 3: 'history of Belarus'"
-echo "history of Belarus" | spark-submit --master local query.py
+./search.sh "history of Belarus"
 
 echo "Container is running. You can run custom searches:"
 echo "  docker exec -it cluster-master bash"

@@ -55,12 +55,11 @@ def get_doc_data():
     return doc_lens, doc_titles
 
 def main():
-    # read query from stdin
-    query = sys.stdin.read().strip()
-    if not query:
-        print("No query provided")
+    if len(sys.argv) < 2:
+        print("Usage: query.py \"query string\"")
         sys.exit(1)
     
+    query = sys.argv[1]
     print(f"Query: {query}\n")
     
     # clean and tokenize query
