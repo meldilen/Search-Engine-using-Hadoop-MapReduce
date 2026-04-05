@@ -2,13 +2,16 @@
 This folder contains the data folder and all scripts and source code that are required to run your simple search engine. 
 
 ### data
-This folder stores the text documents required to index. Here you can find a sample of 100 documents from `a.parquet` file from the original source.
+This folder stores the text documents required to index. Here you can find a sample of 1000 documents from `d.parquet` file from the original source.
 
 ### mapreduce
 This folder stores the mapper `mapperx.py` and reducer `reducerx.py` scripts for the MapReduce pipelines.
 
-### app.py
-This is a Python file to write code to store index data in Cassandra.
+### add_document.py
+A PySpark script that processes a single new document, cleans wiki markup, extracts terms with term frequencies, and updates Cassandra tables (`term_index`, `doc_stats`, `global_stats`) incrementally.
+
+### add_to_index.sh
+A wrapper script that accepts a local text file (formatted as `{id}_{title}.txt`), copies it to HDFS, and triggers `add_document.py` to incrementally update the index.
 
 ### app.sh
 The entrypoint for the executables in your repository and includes all commands that will run your programs in this folder.
